@@ -1,21 +1,41 @@
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
+import { defineApplicationConfig } from '@vben/vite-config';
 
-// https://vitejs.dev/config/
-export default defineConfig(async () => ({
-  plugins: [vue()],
-
-  // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
-  //
-  // 1. prevent vite from obscuring rust errors
-  clearScreen: false,
-  // 2. tauri expects a fixed port, fail if that port is not available
-  server: {
-    port: 1420,
-    strictPort: true,
-    watch: {
-      // 3. tell vite to ignore watching `src-tauri`
-      ignored: ["**/src-tauri/**"],
+export default defineApplicationConfig({
+  overrides: {
+    optimizeDeps: {
+      include: [
+        'echarts/core',
+        'echarts/charts',
+        'echarts/components',
+        'echarts/renderers',
+        'qrcode',
+        '@iconify/iconify',
+        'ant-design-vue/es/locale/zh_CN',
+        'ant-design-vue/es/locale/en_US',
+      ],
+    },
+    server: {
+      port: 1420,
+      proxy: {
+        '/basic-api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          ws: true,
+          rewrite: (path) => path.replace(new RegExp(`^/basic-api`), ''),
+          // only https
+          // secure: false
+        },
+        '/upload': {
+          target: 'http://localhost:3300/upload',
+          changeOrigin: true,
+          ws: true,
+          rewrite: (path) => path.replace(new RegExp(`^/upload`), ''),
+        },
+      },
+      // open: true, // 项目启动后，自动打开
+      warmup: {
+        clientFiles: ['./index.html', './src/{views,components}/*'],
+      },
     },
   },
-}));
+});
