@@ -37,9 +37,10 @@
     "reinstall": "rimraf pnpm-lock.yaml && rimraf package.lock.json && rimraf node_modules && npm run bootstrap",
     "serve": "npm run dev",
     "test:gzip": "npx http-server dist --cors --gzip -c-1",
-    "tauri": "tauri dev",
-    "tauri-build": "tauri build",
-    "type:check": "vue-tsc --noEmit --skipLibCheck"
+    "type:check": "vue-tsc --noEmit --skipLibCheck",
+    "tauri": "tauri",
+    "tauri-dev": "tauri dev",
+    "tauri-build": "tauri build"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -154,7 +155,7 @@
     "vue-tsc": "^2.0.14",
     "@tauri-apps/cli": ">=2.0.0-beta.0"
   },
-  "packageManager": "pnpm@9.0.4",
+  "packageManager": "pnpm@9.0.6",
   "engines": {
     "node": ">=18.12.0",
     "pnpm": ">=9.0.2"

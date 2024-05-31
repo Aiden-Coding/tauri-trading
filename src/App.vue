@@ -11,11 +11,17 @@
   import { useTitle } from '@/hooks/web/useTitle';
   import { useLocale } from '@/locales/useLocale';
   import { ConfigProvider } from 'ant-design-vue';
-
+import { ask } from '@tauri-apps/plugin-dialog';
   import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import 'dayjs/locale/zh-cn';
   import { computed } from 'vue';
+// 创建 Yes/No 对话框
+const answer = await ask('This action cannot be reverted. Are you sure?', {
+  title: 'Tauri',
+  type: 'warning',
+});
 
+console.log(answer);
   // support Multi-language
   const { getAntdLocale } = useLocale();
 
