@@ -65,6 +65,8 @@ pub fn run() {
                     .title("Tauri API Validation")
                     .inner_size(1000., 800.)
                     .min_inner_size(600., 400.)
+                    .closable(true)
+                    .resizable(true)
                     .content_protected(true);
             }
 
