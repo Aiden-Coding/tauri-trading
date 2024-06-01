@@ -81,6 +81,7 @@ pub fn run() {
                 webview_window_builder = webview_window_builder.transparent(true);
             }
 
+            #[allow(unused_variables)]
             let webview = webview_window_builder.build().unwrap();
 
             #[cfg(debug_assertions)]
