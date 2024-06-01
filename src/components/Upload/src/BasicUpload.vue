@@ -85,7 +85,7 @@
     const value = { ...attrs, ...props };
     return omit(value, 'onChange');
   });
-  function getValue(valueKey="url") {
+  function getValue(valueKey = 'url') {
     const list = (fileList.value || []).map((item: any) => {
       return item[valueKey];
     });
@@ -110,7 +110,7 @@
         } else if (typeof v == 'string') {
           values.push(v);
         }
-        fileList.value = values.map((item,i) => {
+        fileList.value = values.map((item, i) => {
           if (item && isString(item)) {
             return {
               uid: buildUUID(),
@@ -130,7 +130,7 @@
   );
 
   // 上传modal保存操作
-  function handleChange(urls: string[],valueKey:string) {
+  function handleChange(urls: string[], valueKey: string) {
     fileList.value = [...unref(fileList), ...(genFileListByUrls(urls) || [])];
     const values = getValue(valueKey);
     emit('update:value', values);
@@ -138,7 +138,7 @@
   }
 
   // 预览modal保存操作
-  function handlePreviewChange(fileItems: string[],valueKey:string) {
+  function handlePreviewChange(fileItems: string[], valueKey: string) {
     fileList.value = [...(fileItems || [])];
     const values = getValue(valueKey);
     emit('update:value', values);

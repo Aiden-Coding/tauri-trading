@@ -10,3 +10,4 @@ public
 .npmrc
 
 *-lock.yaml
+src-tauri/target

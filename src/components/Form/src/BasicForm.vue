@@ -167,12 +167,7 @@
       }
 
       // handle schema.valueFormat
-      if (
-        isHandleDefaultValue &&
-        defaultValue &&
-        component &&
-        isFunction(valueFormat)
-      ) {
+      if (isHandleDefaultValue && defaultValue && component && isFunction(valueFormat)) {
         schema.defaultValue = valueFormat({
           value: defaultValue,
           schema,
