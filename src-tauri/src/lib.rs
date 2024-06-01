@@ -86,47 +86,47 @@ pub fn run() {
             #[cfg(debug_assertions)]
             webview.open_devtools();
 
-            // std::thread::spawn(|| {
-            //     let server = match tiny_http::Server::http("localhost:3003") {
-            //         Ok(s) => s,
-            //         Err(e) => {
-            //             eprintln!("{}", e);
-            //             std::process::exit(1);
-            //         }
-            //     };
-            //     loop {
-            //         if let Ok(mut request) = server.recv() {
-            //             let mut body = Vec::new();
-            //             let _ = request.as_reader().read_to_end(&mut body);
-            //             let response = tiny_http::Response::new(
-            //                 tiny_http::StatusCode(200),
-            //                 request.headers().to_vec(),
-            //                 std::io::Cursor::new(body),
-            //                 request.body_length(),
-            //                 None,
-            //             );
-            //             let _ = request.respond(response);
-            //         }
-            //     }
-            // });
+            std::thread::spawn(|| {
+                let server = match tiny_http::Server::http("localhost:3003") {
+                    Ok(s) => s,
+                    Err(e) => {
+                        eprintln!("{}", e);
+                        std::process::exit(1);
+                    }
+                };
+                loop {
+                    if let Ok(mut request) = server.recv() {
+                        let mut body = Vec::new();
+                        let _ = request.as_reader().read_to_end(&mut body);
+                        let response = tiny_http::Response::new(
+                            tiny_http::StatusCode(200),
+                            request.headers().to_vec(),
+                            std::io::Cursor::new(body),
+                            request.body_length(),
+                            None,
+                        );
+                        let _ = request.respond(response);
+                    }
+                }
+            });
 
             Ok(())
-        });
-        // .on_page_load(|webview, payload| {
-        //     if payload.event() == PageLoadEvent::Finished {
-        //         let webview_ = webview.clone();
-        //         webview.listen("js-event", move |event| {
-        //             println!("got js-event with message '{:?}'", event.payload());
-        //             let reply = Reply {
-        //                 data: "something else".to_string(),
-        //             };
+        })
+        .on_page_load(|webview, payload| {
+            if payload.event() == PageLoadEvent::Finished {
+                let webview_ = webview.clone();
+                webview.listen("js-event", move |event| {
+                    println!("got js-event with message '{:?}'", event.payload());
+                    let reply = Reply {
+                        data: "something else".to_string(),
+                    };
 
-        //             webview_
-        //                 .emit("rust-event", Some(reply))
-        //                 .expect("failed to emit");
-        //         });
-        //     }
-        // });
+                    webview_
+                        .emit("rust-event", Some(reply))
+                        .expect("failed to emit");
+                });
+            }
+        });
 
     #[cfg(target_os = "macos")]
     {
