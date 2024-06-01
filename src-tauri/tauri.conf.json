@@ -12,7 +12,6 @@
     
     "security": {
      "csp": null,
-      "freezePrototype": true,
       "assetProtocol": {
         "enable": true,
         "scope": {
