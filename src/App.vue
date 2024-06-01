@@ -13,9 +13,7 @@
   import { ConfigProvider } from 'ant-design-vue';
   import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import 'dayjs/locale/zh-cn';
-  import { computed, onMounted } from 'vue';
-  import { invoke } from '@tauri-apps/api/core';
-
+  import { computed } from 'vue';
   // support Multi-language
   const { getAntdLocale } = useLocale();
 
@@ -37,9 +35,5 @@
   );
   // Listening to page changes and dynamically changing site titles
   useTitle();
-  onMounted(async () => {
-    const msg = await invoke('greet', { name: 'helo' });
-    console.log('mount');
-    console.log(msg);
-  });
+ 
 </script>
