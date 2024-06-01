@@ -14,10 +14,7 @@
   import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import 'dayjs/locale/zh-cn';
   import { computed } from 'vue';
-  import { listen } from '@tauri-apps/api/event';
-  listen('click', (event) => {
-    console.log('click', event.detail);
-});
+
   // support Multi-language
   const { getAntdLocale } = useLocale();
 
