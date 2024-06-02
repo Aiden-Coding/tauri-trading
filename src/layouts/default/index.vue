@@ -1,5 +1,6 @@
 <template>
   <Layout :class="prefixCls" v-bind="lockEvents">
+    <TitleBar />
     <LayoutFeatures />
     <LayoutHeader fixed v-if="getShowFullHeaderRef" />
     <Layout :class="[layoutClass, `${prefixCls}-out`]">
@@ -23,6 +24,7 @@
   import LayoutSideBar from './sider/index.vue';
   import LayoutMultipleHeader from './header/MultipleHeader.vue';
 
+  import TitleBar from './titleBar/TitleBar.vue';
   import { useHeaderSetting } from '@/hooks/setting/useHeaderSetting';
   import { useMenuSetting } from '@/hooks/setting/useMenuSetting';
   import { useDesign } from '@/hooks/web/useDesign';
