@@ -10,6 +10,7 @@
     "global-shortcut:allow-unregister",
     "global-shortcut:allow-register",
     "global-shortcut:allow-unregister-all",
+    "shell:allow-open",
     {
       "identifier": "shell:allow-execute",
       "allow": [
