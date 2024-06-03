@@ -77,6 +77,7 @@
     "@logicflow/core": "^1.2.26",
     "@logicflow/extension": "^1.2.26",
     "@tauri-apps/api": "2.0.0-beta.13",
+    "@tauri-apps/plugin-autostart": "2.0.0-beta.5",
     "@tauri-apps/plugin-barcode-scanner": "2.0.0-beta.5",
     "@tauri-apps/plugin-biometric": "2.0.0-beta.5",
     "@tauri-apps/plugin-cli": "2.0.0-beta.5",
