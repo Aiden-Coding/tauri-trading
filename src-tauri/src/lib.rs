@@ -56,38 +56,37 @@ pub fn run() {
                 app.handle().plugin(tauri_plugin_biometric::init())?;
             }
 
-            let mut webview_window_builder =
-                WebviewWindowBuilder::new(app, "main", WebviewUrl::default());
-            #[cfg(desktop)]
-            {
-                webview_window_builder = webview_window_builder
-                    .user_agent(&format!("Tauri API - {}", std::env::consts::OS))
-                    .title("Tauri API Validation")
-                    .inner_size(1000., 800.)
-                    .min_inner_size(600., 400.)
-                    .closable(true)
-                    .resizable(true)
-                    .content_protected(true);
-            }
+            let win_builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::default())
+                .title("Transparent Titlebar Window")
+                .inner_size(800.0, 600.0);
 
-            #[cfg(target_os = "windows")]
-            {
-                webview_window_builder = webview_window_builder
-                    .transparent(true)
-                    .shadow(true)
-                    .decorations(false);
-            }
+            // 仅在 macOS 时设置透明标题栏
+            #[cfg(target_os = "macos")]
+            let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
 
+            let window = win_builder.build().unwrap();
+
+            // 仅在构建 macOS 时设置背景颜色
             #[cfg(target_os = "macos")]
             {
-                webview_window_builder = webview_window_builder.transparent(true);
+                use cocoa::appkit::{NSColor, NSWindow};
+                use cocoa::base::{id, nil};
+
+                let ns_window = window.ns_window().unwrap() as id;
+                unsafe {
+                    let bg_color = NSColor::colorWithRed_green_blue_alpha_(
+                        nil,
+                        50.0 / 255.0,
+                        158.0 / 255.0,
+                        163.5 / 255.0,
+                        1.0,
+                    );
+                    ns_window.setBackgroundColor_(bg_color);
+                }
             }
 
-            #[allow(unused_variables)]
-            let webview = webview_window_builder.build().unwrap();
-
             #[cfg(debug_assertions)]
-            webview.open_devtools();
+            window.open_devtools();
 
             std::thread::spawn(|| {
                 let server = match tiny_http::Server::http("localhost:3003") {
