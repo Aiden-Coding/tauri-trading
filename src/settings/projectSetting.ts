@@ -51,7 +51,7 @@ const setting: ProjectConfig = {
   contentMode: ContentEnum.FULL,
 
   // Whether to display the logo
-  showLogo: true,
+  showLogo: false,
 
   // Whether to show footer
   showFooter: false,
@@ -69,9 +69,9 @@ const setting: ProjectConfig = {
     // Whether to enable the lock screen function
     useLockPage: true,
     // Whether to show the full screen button
-    showFullScreen: true,
+    showFullScreen: false,
     // Whether to show the document button
-    showDoc: true,
+    showDoc: false,
     // Whether to show the notification button
     showNotice: true,
     // Whether to display the menu search
@@ -93,13 +93,13 @@ const setting: ProjectConfig = {
     collapsedShowTitle: false,
     // Whether it can be dragged
     // Only limited to the opening of the left menu, the mouse has a drag bar on the right side of the menu
-    canDrag: false,
+    canDrag: true,
     // Whether to show no dom
     show: true,
     // Whether to show dom
     hidden: false,
     // Menu width
-    menuWidth: 210,
+    menuWidth: 120,
     // Menu mode
     mode: MenuModeEnum.INLINE,
     // Menu type
@@ -111,7 +111,7 @@ const setting: ProjectConfig = {
     // Top menu layout
     topMenuAlign: 'center',
     // Fold trigger position
-    trigger: TriggerEnum.HEADER,
+    trigger: TriggerEnum.FOOTER,
     // Turn on accordion mode, only show a menu
     accordion: true,
     // Switch page to close menu
