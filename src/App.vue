@@ -17,11 +17,14 @@
   import 'dayjs/locale/zh-cn';
   import { computed, onMounted } from 'vue';
   import { getVersion } from '@tauri-apps/api/app';
+
+  import { isTauri } from '@tauri-apps/api/core';
   // support Multi-language
   const { getAntdLocale } = useLocale();
 
   const { isDark, darkTheme } = useDarkModeTheme();
-
+  const result = isTauri();
+  console.log(result);
   const themeConfig = computed(() =>
     Object.assign(
       {
