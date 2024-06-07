@@ -71,7 +71,8 @@ pub fn run() {
             #[cfg(target_os = "windows")]
             {
                 webview_window_builder = webview_window_builder
-                    .transparent(true)
+                //透明
+                    .transparent(false)
                     .shadow(true)
                     .decorations(false);
             }

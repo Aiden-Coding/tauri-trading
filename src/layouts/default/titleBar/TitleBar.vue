@@ -18,9 +18,7 @@
   });
 </script>
 <style lang="less">
-
   @prefix-cls: ~'@{namespace}-title-bar';
-
   .@{prefix-cls} {
     height: 30px;
     background-color: @sider-dark-bg-color;
