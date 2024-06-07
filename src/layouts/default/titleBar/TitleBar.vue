@@ -22,7 +22,6 @@
     user-select: none;
     display: flex;
     justify-content: flex-end;
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
