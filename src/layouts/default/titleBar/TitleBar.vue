@@ -1,39 +1,24 @@
 <template>
   <div data-tauri-drag-region class="titlebar">
-    <div class="titlebar-button" id="titlebar-minimize">
-      <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
-    </div>
-    <div class="titlebar-button" id="titlebar-maximize">
-      <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
-    </div>
-    <div class="titlebar-button" id="titlebar-close">
-      <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
-    </div>
+    <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
+    <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
+    <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
   </div>
 </template>
 
 <script lang="ts" setup>
-  const l = 'hwl';
+  import { Button } from 'ant-design-vue';
+  import Icon from '@/components/Icon/Icon.vue';
 </script>
-<style scoped>
+<style lang="less">
   .titlebar {
     height: 30px;
-    background: #329ea3;
+    background-color: @component-background;
     user-select: none;
     display: flex;
     justify-content: flex-end;
     top: 0;
     left: 0;
     right: 0;
-  }
-  .titlebar-button {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;
-    height: 30px;
-  }
-  .titlebar-button:hover {
-    background: #5bbec3;
   }
 </style>
