@@ -1,6 +1,5 @@
 <template>
   <Layout :class="prefixCls" v-bind="lockEvents">
-   
     <LayoutFeatures />
     <LayoutHeader fixed v-if="getShowFullHeaderRef" />
     <Layout :class="[layoutClass, `${prefixCls}-out`]">
