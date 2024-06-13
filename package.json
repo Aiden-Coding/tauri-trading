@@ -16,6 +16,7 @@
     "url": "https://github.com/anncwb"
   },
   "type": "module",
+  "main": "dist-electron/main.js",
   "scripts": {
     "bootstrap": "pnpm install",
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 pnpm vite build",
@@ -25,6 +26,9 @@
     "build:test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 pnpm vite build --mode test",
     "commit": "czg",
     "dev": "pnpm vite",
+    "electron-build": "vue-tsc && vite build && electron-builder",
+    "electron-build2": "cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 pnpm vite build && electron-builder",
+    "electron-dev": "vite",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "turbo run stub",
     "lint": "turbo run lint",
@@ -158,6 +162,8 @@
     "cross-env": "^7.0.3",
     "cz-git": "^1.9.1",
     "czg": "^1.9.1",
+    "electron": "^30.0.1",
+    "electron-builder": "^24.13.3",
     "husky": "^9.0.11",
     "lint-staged": "15.2.2",
     "prettier": "^3.2.5",

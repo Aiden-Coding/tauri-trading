@@ -51,6 +51,8 @@
     "unocss": "0.59.4",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-dts": "^3.9.0",
+    "vite-plugin-electron": "^0.28.6",
+    "vite-plugin-electron-renderer": "^0.14.5",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-mock": "^2.9.6",
     "vite-plugin-purge-icons": "^0.10.0",
