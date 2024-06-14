@@ -49,8 +49,7 @@ function createWindow() {
   }
   /** 窗口移动功能封装 */
   // 窗口移动 位置刷新定时器
-  let movingInterval = null;
-
+  let movingInterval: NodeJS.Timeout | null;
   /**
    * 窗口移动事件
    */
@@ -78,7 +77,7 @@ function createWindow() {
           if (!currentWindow.isDestroyed()) {
             // 如果窗口失去焦点，则停止移动
             if (!currentWindow.isFocused()) {
-              clearInterval(movingInterval);
+              if (movingInterval) clearInterval(movingInterval);
               movingInterval = null;
             }
             // 实时更新位置
@@ -95,7 +94,7 @@ function createWindow() {
           }
         }, 10);
       } else {
-        clearInterval(movingInterval);
+        if (movingInterval) clearInterval(movingInterval);
         movingInterval = null;
       }
     }
