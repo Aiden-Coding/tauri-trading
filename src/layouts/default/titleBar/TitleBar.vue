@@ -7,7 +7,7 @@
     @mousedown="mousedown"
     @mouseup="mouseup"
   >
-    <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
+    <Button> <Icon icon="ant-design:fullscreen-exit-outlined" /></Button>
     <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
     <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
   </div>
