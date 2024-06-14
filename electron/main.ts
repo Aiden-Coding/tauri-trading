@@ -30,6 +30,10 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
+    width: 1000,
+    transparent: true,
+    frame: false,
+    height: 800,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
@@ -54,19 +58,15 @@ function createWindow() {
    * 窗口移动事件
    */
   ipcMain.on('window-move-open', (event, canMoving) => {
-    let winStartPosition = { x: 0, y: 0 };
-    let mouseStartPosition = { x: 0, y: 0 };
-    const currentWindow = getWindowByEvent(event);
-
-    const currentWindowSize = currentWindow.getSize();
+    // 获取当前鼠标聚焦的窗口
+    const currentWindow = BrowserWindow.getFocusedWindow();
 
     if (currentWindow) {
+      const currentWindowSize = currentWindow.getSize();
       if (canMoving) {
         // 读取原位置
         const winPosition = currentWindow.getPosition();
-        winStartPosition = { x: winPosition[0], y: winPosition[1] };
-        // 获取当前鼠标聚焦的窗口
-        mouseStartPosition = BrowserWindow.getFocusedWindow();
+        let winStartPosition = screen.getCursorScreenPoint();
         // 清除旧的定时器
         if (movingInterval) {
           clearInterval(movingInterval);
@@ -82,8 +82,8 @@ function createWindow() {
             }
             // 实时更新位置
             const cursorPosition = screen.getCursorScreenPoint();
-            const x = winStartPosition.x + cursorPosition.x - mouseStartPosition.x;
-            const y = winStartPosition.y + cursorPosition.y - mouseStartPosition.y;
+            const x = cursorPosition.x - winStartPosition.x + winPosition[0];
+            const y = cursorPosition.y - winStartPosition.y + winPosition[1];
             // 更新位置的同时设置窗口原大小， windows上设置=>显示设置=>文本缩放 不是100%时，窗口会拖拽放大
             currentWindow.setBounds({
               x: x,
@@ -91,6 +91,9 @@ function createWindow() {
               width: currentWindowSize[0],
               height: currentWindowSize[1],
             });
+          } else {
+            if (movingInterval) clearInterval(movingInterval);
+            movingInterval = null;
           }
         }, 10);
       } else {
