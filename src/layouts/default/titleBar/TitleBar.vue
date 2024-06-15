@@ -1,6 +1,5 @@
 <template>
   <div
-    data-tauri-drag-region
     :class="getSiderClass"
     @mouseenter="mouseenter"
     @mouseleave="mouseleave"

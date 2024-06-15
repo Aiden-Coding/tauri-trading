@@ -16,7 +16,6 @@
   import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import 'dayjs/locale/zh-cn';
   import { computed, onMounted } from 'vue';
-  import { getVersion } from '@tauri-apps/api/app';
   // support Multi-language
   const { getAntdLocale } = useLocale();
 
@@ -39,7 +38,5 @@
   // Listening to page changes and dynamically changing site titles
   useTitle();
   onMounted(async () => {
-    let result = await getVersion();
-    console.log(result);
   });
 </script>
