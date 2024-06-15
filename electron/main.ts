@@ -2,6 +2,9 @@ import { app, BrowserWindow, ipcMain, screen } from 'electron';
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import fs from 'node:fs';
+import { ChildProcess } from 'node:child_process';
+import child_process from 'node:child_process';
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -27,7 +30,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   : RENDERER_DIST;
 
 let win: BrowserWindow | null;
-
+let workerProcess: ChildProcess | null;
 function createWindow() {
   win = new BrowserWindow({
     width: 1000,
@@ -102,6 +105,29 @@ function createWindow() {
       }
     }
   });
+  workerProcess = child_process.exec(
+    'start /b C:\\Users\\Administrator\\.jdks\\openjdk-21.0.1\\bin\\java.exe -jar trading-life-java.jar',
+    function (error, stdout, stderr) {
+      if (error) {
+        console.log('error');
+        console.log(error.stack);
+        console.log('Error code: ' + error.code);
+        console.log('Signal received: ' + error.signal);
+      }
+
+      console.log('stdout');
+      console.log('stdout: ' + stdout);
+      console.log('stderr: ' + stderr);
+    },
+  );
+
+  workerProcess.on('exit', function (code) {
+    console.log('child_process');
+    console.log('child_process exit ');
+    console.log('child_process exit ' + code);
+    console.log('child_process exit ');
+  });
+  console.log(workerProcess.pid);
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -109,6 +135,12 @@ function createWindow() {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    if (workerProcess) {
+      let result = workerProcess.kill();
+
+      console.log('result');
+      console.log(result);
+    }
     app.quit();
     win = null;
   }
