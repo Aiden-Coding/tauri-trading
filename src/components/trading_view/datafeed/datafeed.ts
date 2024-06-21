@@ -164,6 +164,7 @@ export default {
     onError: ErrorCallback,
   ) => {
     const { from, to, firstDataRequest } = periodParams;
+    console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
     try {
       const data = await getDayWeekYearData({
         symbol: symbolInfo.name,
@@ -184,8 +185,10 @@ export default {
         close: number;
         volume: number;
       }[] = [];
+
       data.forEach((bar) => {
         const tmp_time = bar['time'] / 1000;
+
         if (tmp_time >= from && tmp_time < to) {
           bars = [
             ...bars,
@@ -308,6 +311,6 @@ export default {
     onDataCallback(marks);
   },
   getServerTime: async (callback: ServerTimeCallback) => {
-    callback(232332);
+    callback(new Date().getTime() / 1000);
   },
 };
