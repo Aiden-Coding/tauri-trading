@@ -4,4 +4,7 @@ module.exports = {
   rules: {
     'no-undef': 'off',
   },
+  parserOptions: {
+    "project": ["tsconfig.json", "tsconfig.node.json"]
+  }
 };
