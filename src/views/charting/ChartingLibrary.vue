@@ -4,7 +4,12 @@
 <script setup>
     import { onMounted, ref, onUnmounted } from 'vue';
     import Datafeed from '@/components/trading_view/datafeed/datafeed';
-    import { isFirst } from '@/api/tradingview/tradingview';
+import { isFirst } from '@/api/tradingview/tradingview';
+    
+import { useUserStore } from '@/store/modules/user';
+import { getUserInfo } from '../../api/sys/user';
+  
+  const userStore = useUserStore();
     function getLanguageFromURL() {
       const regex = new RegExp('[\\?&]lang=([^&#]*)');
       const results = regex.exec(window.location.search);
@@ -74,7 +79,7 @@
         charts_storage_url: props.chartsStorageUrl,
         charts_storage_api_version: props.chartsStorageApiVersion,
         client_id: props.clientId,
-        user_id: props.userId,
+        user_id: userStore.getUserInfo.userId,
         fullscreen: props.fullscreen,
         autosize: props.autosize,
         studies_overrides: props.studiesOverrides,
