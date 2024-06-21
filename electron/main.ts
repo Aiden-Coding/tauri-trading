@@ -34,9 +34,9 @@ let workerProcess: ChildProcess | null;
 function createWindow() {
   win = new BrowserWindow({
     width: 1000,
-    resizable: true,
-    transparent: true,
-    fullscreenable: true,
+    // resizable: true,
+    // transparent: true,
+    // fullscreenable: true,
     // frame: false,
     height: 800,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
