@@ -148,7 +148,7 @@ export default {
       has_weekly_and_monthly: true,
       supported_resolutions: configurationData.supported_resolutions,
       volume_precision: 2,
-      listed_exchange: symbolItem.Exchange,
+      listed_exchange: symbolItem.exchange,
       format: 'price',
       // data_status: 'treaming',
     };
@@ -185,17 +185,17 @@ export default {
         volume: number;
       }[] = [];
       data.forEach((bar) => {
-        const tmp_time = bar['日期'] / 1000;
+        const tmp_time = bar['time'] / 1000;
         if (tmp_time >= from && tmp_time < to) {
           bars = [
             ...bars,
             {
-              time: bar['日期'],
-              low: bar['最低'],
-              high: bar['最高'],
-              open: bar['开盘'],
-              close: bar['收盘'],
-              volume: bar['成交量'],
+              time: bar['time'],
+              low: bar['low'],
+              high: bar['high'],
+              open: bar['open'],
+              close: bar['close'],
+              volume: bar['volume'],
             },
           ];
         }
