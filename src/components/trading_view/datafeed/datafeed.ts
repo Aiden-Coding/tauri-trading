@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { DatafeedConfiguration } from './charting_library';
 import { makeApiRequest, generateSymbol, parseFullSymbol } from './helper';
 import { subscribeOnStream, unsubscribeFromStream } from './streaming.js';
 
@@ -17,13 +18,7 @@ interface SymbolType {
   value: string;
 }
 
-interface ConfigurationData {
-  supported_resolutions: string[];
-  exchanges: Exchange[];
-  symbols_types: SymbolType[];
-}
-
-const configurationData: ConfigurationData = {
+const configurationData: DatafeedConfiguration = {
   supported_resolutions: [
     '1T',
     '5T',
@@ -94,33 +89,9 @@ const configurationData: ConfigurationData = {
       value: 'kzz',
     },
   ],
+  supports_marks: true,
+  supports_time: true,
 };
-
-// Obtains all symbols for all exchanges supported by CryptoCompare API
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getAllSymbols(): Promise<any[]> {
-  const data = await makeApiRequest('data/v3/all/exchanges');
-  let allSymbols = [];
-
-  for (const exchange of configurationData.exchanges) {
-    const pairs = data.Data[exchange.value].pairs;
-
-    for (const leftPairPart of Object.keys(pairs)) {
-      const symbols = pairs[leftPairPart].map((rightPairPart) => {
-        const symbol = generateSymbol(exchange.value, leftPairPart, rightPairPart);
-        return {
-          symbol: symbol.short,
-          full_name: symbol.full,
-          description: symbol.short,
-          exchange: exchange.value,
-          type: 'crypto',
-        };
-      });
-      allSymbols = [...allSymbols, ...symbols];
-    }
-  }
-  return allSymbols;
-}
 
 export default {
   onReady: (callback: (data: ConfigurationData) => void) => {
@@ -255,7 +226,6 @@ export default {
       onErrorCallback(error);
     }
   },
-
   subscribeBars: (
     symbolInfo: any,
     resolution: string,
@@ -278,4 +248,67 @@ export default {
     console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
     unsubscribeFromStream(subscriberUID);
   },
+  getMarks: (symbolInfo, startDate, endDate, onDataCallback, resolution) => {
+    console.log('getMarks');
+
+    onDataCallback([
+      {
+        id: 1,
+        time: endDate,
+        color: 'red',
+        text: ['This is the mark pop-up text.'],
+        label: 'M',
+        labelFontColor: 'blue',
+        minSize: 25,
+      },
+      {
+        id: 2,
+        time: endDate + 5260000, // 2 months
+        color: 'red',
+        text: ['Second marker'],
+        label: 'S',
+        labelFontColor: 'green',
+        minSize: 25,
+      },
+    ]);
+  },
+  getTimescaleMarks: (symbolInfo, startDate, endDate, onDataCallback, resolution) => {
+    // optional
+    console.log('getTimescaleMarks');
+
+    let marks = [];
+
+    if (symbolInfo.name === 'AAPL') {
+      marks = [
+        {
+          id: 1,
+          time: startDate,
+          color: 'red',
+          label: 'Aa',
+          minSize: 30,
+          tooltip: ['Lorem', 'Ipsum', 'Dolor', 'Sit'],
+        },
+        {
+          id: 2,
+          time: startDate + 5260000, // 2 months
+          color: 'blue',
+          label: 'B',
+          minSize: 30,
+          tooltip: ['Amet', 'Consectetur', 'Adipiscing', 'Elit'],
+        },
+      ];
+    } else {
+      marks = [
+        {
+          id: 'String id',
+          time: endDate,
+          color: 'red',
+          label: 'T',
+          tooltip: ['Nulla'],
+        },
+      ];
+    }
+    onDataCallback(marks);
+  },
+  getServerTime: (callback: ServerTimeCallback) => {},
 };
