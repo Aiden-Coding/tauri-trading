@@ -11,7 +11,7 @@ const charts: AppRouteModule = {
   meta: {
     orderNo: 1,
     title: 'charting',
-    icon: 'ant-design:stock-outlined',
+    icon: 'streamline:stock',
   },
   children: [
     {
