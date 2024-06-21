@@ -7,7 +7,7 @@ const charts: AppRouteModule = {
   path: '/charting_view',
   name: 'charting_view',
   component: LAYOUT,
-  redirect: '/charting_view/echarts/map',
+  redirect: '/charting_view/charting_library',
   meta: {
     orderNo: 1,
     title: 'charting',
