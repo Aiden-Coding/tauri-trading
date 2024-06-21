@@ -1,49 +1,51 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { DatafeedConfiguration } from './charting_library';
-import { makeApiRequest, generateSymbol, parseFullSymbol } from './helper';
+import {
+  DatafeedConfiguration,
+  HistoryCallback,
+  LibrarySymbolInfo,
+  PeriodParams,
+  ResolutionString,
+  ResolveCallback,
+  ErrorCallback,
+  SearchSymbolsCallback,
+  SubscribeBarsCallback,
+  SymbolResolveExtension,
+  GetMarksCallback,
+  TimescaleMark,
+  ServerTimeCallback,
+} from './charting_library';
 import { subscribeOnStream, unsubscribeFromStream } from './streaming.js';
 
 import { stockSearch, getDayWeekYearData } from '@/api/tradingview/tradingview';
 
 const lastBarsCache = new Map<string, any>();
 
-interface Exchange {
-  value: string;
-  name: string;
-  desc: string;
-}
-
-interface SymbolType {
-  name: string;
-  value: string;
-}
-
 const configurationData: DatafeedConfiguration = {
   supported_resolutions: [
-    '1T',
-    '5T',
-    '100T', //tick
-    '1S',
-    '2S',
-    '100S', //second
-    '1',
-    '2',
-    '100', //minute
-    '60',
-    '120',
-    '240', //hour
-    '1D',
-    '2D',
-    '100D', //day
-    '1W',
-    '2W',
-    '240W', //week
-    '1M',
-    '2M',
-    '100M', //month
-    '12M',
-    '24M',
-    '48M', //year
+    '1T' as ResolutionString,
+    '5T' as ResolutionString,
+    '100T' as ResolutionString, //tick
+    '1S' as ResolutionString,
+    '2S' as ResolutionString,
+    '100S' as ResolutionString, //second
+    '1' as ResolutionString,
+    '2' as ResolutionString,
+    '100' as ResolutionString, //minute
+    '60' as ResolutionString,
+    '120' as ResolutionString,
+    '240' as ResolutionString, //hour
+    '1D' as ResolutionString,
+    '2D' as ResolutionString,
+    '100D' as ResolutionString, //day
+    '1W' as ResolutionString,
+    '2W' as ResolutionString,
+    '240W' as ResolutionString, //week
+    '1M' as ResolutionString,
+    '2M' as ResolutionString,
+    '100M' as ResolutionString, //month
+    '12M' as ResolutionString,
+    '24M' as ResolutionString,
+    '48M' as ResolutionString, //year
   ],
   exchanges: [
     {
@@ -94,7 +96,7 @@ const configurationData: DatafeedConfiguration = {
 };
 
 export default {
-  onReady: (callback: (data: ConfigurationData) => void) => {
+  onReady: (callback: (data: DatafeedConfiguration) => void) => {
     console.log('[onReady]: Method call');
     setTimeout(() => callback(configurationData));
   },
@@ -103,7 +105,7 @@ export default {
     userInput: string,
     exchange: string,
     symbolType: string,
-    onResultReadyCallback: (symbols: any[]) => void,
+    onResult: SearchSymbolsCallback,
   ) => {
     console.log('[searchSymbols]: Method call');
     const symbols = await stockSearch({
@@ -111,15 +113,14 @@ export default {
       exchange: exchange,
       symbolType: symbolType,
     });
-    onResultReadyCallback(symbols);
+    onResult(symbols);
   },
 
   resolveSymbol: async (
     symbolName: string,
-    onSymbolResolvedCallback: (symbolInfo: any) => void,
-    onResolveErrorCallback: (error: string) => void,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    extension: any,
+    onResolve: ResolveCallback,
+    onError: ErrorCallback,
+    extension?: SymbolResolveExtension,
   ) => {
     console.log('[resolveSymbol]: Method call', symbolName);
     const symbols = await stockSearch({ ticker: symbolName });
@@ -129,29 +130,12 @@ export default {
     }
     if (!symbolItem) {
       console.log('[resolveSymbol]: Cannot resolve symbol', symbolName);
-      onResolveErrorCallback('cannot resolve symbol');
+      onError('cannot resolve symbol');
       return;
     }
     // Symbol information object
-    const symbolInfo: {
-      ticker: string;
-      full_name: string;
-      name: string;
-      description: string;
-      type: string;
-      session: string;
-      timezone: string;
-      exchange: string;
-      minmov: number;
-      pricescale: number;
-      has_intraday: boolean;
-      has_weekly_and_monthly: boolean;
-      supported_resolutions: string[];
-      volume_precision: number;
-      // data_status: string
-    } = {
+    const symbolInfo: LibrarySymbolInfo = {
       ticker: symbolItem.full_name,
-      full_name: symbolItem.full_name,
       name: symbolItem.symbol,
       description: symbolItem.description,
       type: symbolItem.type,
@@ -164,18 +148,20 @@ export default {
       has_weekly_and_monthly: true,
       supported_resolutions: configurationData.supported_resolutions,
       volume_precision: 2,
+      listed_exchange: symbolItem.Exchange,
+      format: 'price',
       // data_status: 'treaming',
     };
     console.log('[resolveSymbol]: Symbol resolved', symbolName);
-    onSymbolResolvedCallback(symbolInfo);
+    onResolve(symbolInfo);
   },
 
   getBars: async (
-    symbolInfo: any,
-    resolution: string,
-    periodParams: any,
-    onHistoryCallback: (bars: any[], options: any) => void,
-    onErrorCallback: (error: any) => void,
+    symbolInfo: LibrarySymbolInfo,
+    resolution: ResolutionString,
+    periodParams: PeriodParams,
+    onResult: HistoryCallback,
+    onError: ErrorCallback,
   ) => {
     const { from, to, firstDataRequest } = periodParams;
     try {
@@ -187,7 +173,7 @@ export default {
         to,
       });
       if (data.length === 0) {
-        onHistoryCallback([], { noData: true });
+        onResult([], { noData: true });
         return;
       }
       let bars: {
@@ -214,47 +200,54 @@ export default {
           ];
         }
       });
-      if (firstDataRequest) {
+      if (firstDataRequest && symbolInfo.ticker) {
         lastBarsCache.set(symbolInfo.ticker, {
           ...bars[bars.length - 1],
         });
       }
       console.log(`[getBars]: returned ${bars.length} bar(s)`);
-      onHistoryCallback(bars, { noData: false });
+      onResult(bars, { noData: false });
     } catch (error) {
       console.log('[getBars]: Get error', error);
-      onErrorCallback(error);
+      onError(error);
     }
   },
   subscribeBars: (
-    symbolInfo: any,
-    resolution: string,
-    onRealtimeCallback: (bar: any) => void,
-    subscriberUID: string,
+    symbolInfo: LibrarySymbolInfo,
+    resolution: ResolutionString,
+    onTick: SubscribeBarsCallback,
+    listenerGuid: string,
     onResetCacheNeededCallback: () => void,
   ) => {
-    console.log('[subscribeBars]: Method call with subscriberUID:', subscriberUID);
-    subscribeOnStream(
-      symbolInfo,
-      resolution,
-      onRealtimeCallback,
-      subscriberUID,
-      onResetCacheNeededCallback,
-      lastBarsCache.get(symbolInfo.full_name),
-    );
+    console.log('[subscribeBars]: Method call with subscriberUID:', listenerGuid);
+    if (symbolInfo.ticker) {
+      subscribeOnStream(
+        symbolInfo,
+        resolution,
+        onTick,
+        listenerGuid,
+        onResetCacheNeededCallback,
+        lastBarsCache.get(symbolInfo.ticker),
+      );
+    }
   },
 
-  unsubscribeBars: (subscriberUID: string) => {
-    console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
-    unsubscribeFromStream(subscriberUID);
+  unsubscribeBars: (listenerGuid: string) => {
+    console.log('[unsubscribeBars]: Method call with subscriberUID:', listenerGuid);
+    unsubscribeFromStream(listenerGuid);
   },
-  getMarks: (symbolInfo, startDate, endDate, onDataCallback, resolution) => {
+  getMarks: async (
+    symbolInfo: LibrarySymbolInfo,
+    from: number,
+    to: number,
+    onDataCallback: GetMarksCallback<Mark>,
+    resolution: ResolutionString,
+  ) => {
     console.log('getMarks');
-
     onDataCallback([
       {
         id: 1,
-        time: endDate,
+        time: to,
         color: 'red',
         text: ['This is the mark pop-up text.'],
         label: 'M',
@@ -263,7 +256,7 @@ export default {
       },
       {
         id: 2,
-        time: endDate + 5260000, // 2 months
+        time: to + 5260000, // 2 months
         color: 'red',
         text: ['Second marker'],
         label: 'S',
@@ -272,28 +265,32 @@ export default {
       },
     ]);
   },
-  getTimescaleMarks: (symbolInfo, startDate, endDate, onDataCallback, resolution) => {
+  getTimescaleMarks: (
+    symbolInfo: LibrarySymbolInfo,
+    from: number,
+    to: number,
+    onDataCallback: GetMarksCallback<TimescaleMark>,
+    resolution: ResolutionString,
+  ) => {
     // optional
     console.log('getTimescaleMarks');
 
-    let marks = [];
+    let marks: TimescaleMark[] = [];
 
     if (symbolInfo.name === 'AAPL') {
       marks = [
         {
           id: 1,
-          time: startDate,
+          time: from,
           color: 'red',
           label: 'Aa',
-          minSize: 30,
           tooltip: ['Lorem', 'Ipsum', 'Dolor', 'Sit'],
         },
         {
           id: 2,
-          time: startDate + 5260000, // 2 months
+          time: from + 5260000, // 2 months
           color: 'blue',
           label: 'B',
-          minSize: 30,
           tooltip: ['Amet', 'Consectetur', 'Adipiscing', 'Elit'],
         },
       ];
@@ -301,7 +298,7 @@ export default {
       marks = [
         {
           id: 'String id',
-          time: endDate,
+          time: to,
           color: 'red',
           label: 'T',
           tooltip: ['Nulla'],
@@ -310,5 +307,7 @@ export default {
     }
     onDataCallback(marks);
   },
-  getServerTime: (callback: ServerTimeCallback) => {},
+  getServerTime: async (callback: ServerTimeCallback) => {
+    callback(232332);
+  },
 };
