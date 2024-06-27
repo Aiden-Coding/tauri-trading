@@ -40,6 +40,12 @@ function createWindow() {
     // frame: false,
     height: 800,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: 'rgba(0,0,0,0)',
+      height: 35,
+      symbolColor: 'white',
+    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
@@ -156,5 +162,7 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
+ipcMain.handle('app_platform', () => {
+  return process.platform;
+});
 app.whenReady().then(createWindow);
