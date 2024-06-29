@@ -9,10 +9,11 @@
   onMounted(async () => {
     const platform = await window.ipcRenderer.invoke('app_platform');
     console.log(platform);
+    console.log(prefixCls);
     if (platform === 'darwin') {
-      document.querySelector('.custom-titlebar')?.classList.add('darwin');
+      document.querySelector('.' + prefixCls)?.classList.add('darwin');
     } else if (platform === 'linux') {
-      document.querySelector('.custom-titlebar')?.classList.add('linux');
+      document.querySelector('.' + prefixCls)?.classList.add('linux');
     }
   });
 </script>
