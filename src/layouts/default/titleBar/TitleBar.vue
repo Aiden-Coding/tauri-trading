@@ -38,13 +38,11 @@
     user-select: none;
     /* 设置该属性表明这是可拖拽区域，用来移动窗口 */
     -webkit-app-region: drag;
-
-    .darwin {
-      justify-content: center;
-    }
-
-    .linux {
-      display: none;
-    }
+  }
+  .darwin {
+    justify-content: center;
+  }
+  .linux {
+    display: none;
   }
 </style>
