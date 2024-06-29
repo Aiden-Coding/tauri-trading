@@ -11,194 +11,135 @@
     <title><%= VITE_GLOB_APP_TITLE %></title>
     <link rel="icon" href="/favicon.ico" />
     <script src="/charting_library/charting_library.standalone.js"></script>
-    <style>
-      html,
-      body {
-        margin: 0;
-        /* 禁止 html,body 滚动，避免滚动条出现在标题栏右边 */
-        overflow: hidden;
-        height: 100%;
-      }
-      .root-container-div {
-        /* 使用 flex 来实现 */
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        background-color: black;
-        color: white;
-      }
-      .custom-titlebar {
-        display: flex;
-        align-items: center;
-        /* 避免被收缩 */
-        flex-shrink: 0;
-        /* 高度与 main.js 中 titleBarOverlay.height 一致  */
-        height: 35px;
-        width: 100%;
-        /* 标题栏始终在最顶层（避免后续被 Modal 之类的覆盖） */
-        z-index: 9999;
-
-        background-color: #23272e;
-        color: white;
-        padding-left: 12px;
-        font-size: 14px;
-        user-select: none;
-        /* 设置该属性表明这是可拖拽区域，用来移动窗口 */
-        -webkit-app-region: drag;
-      }
-      .custom-titlebar.darwin {
-        justify-content: center;
-      }
-      .custom-titlebar.linux {
-        display: none;
-      }
-    </style>
-    <script type="text/javascript">
-      (async () => {
-        // MacOS 上红绿灯默认在标题栏左侧，因此需要将窗口标题文字让开以避免遮挡，这里设为居中。
-        // 需要注意这里使用了 electron-vite 框架，如果你没有使用该框架，可在 Node 后端将 process.platform 传递给前端进行判断。
-        // 'darwin' 代表 MacOS
-        const platform = await window.ipcRenderer.invoke('app_platform');
-        console.log(platform);
-        if (platform === 'darwin') {
-          document.querySelector('.custom-titlebar').classList.add('darwin');
-        } else if (platform === 'linux') {
-          document.querySelector('.custom-titlebar').classList.add('linux');
-        }
-      })();
-    </script>
   </head>
 
   <body>
-    <div class="root-container-div">
-      <div class="custom-titlebar"> 自定义标题栏 </div>
-      <div id="app">
-        <style>
-          html {
-            /* same as ant-design-vue/dist/reset.css setting, avoid the title line-height changed */
-            line-height: 1.15;
-          }
+    <div id="app">
+      <style>
+        html {
+          /* same as ant-design-vue/dist/reset.css setting, avoid the title line-height changed */
+          line-height: 1.15;
+        }
 
-          html[data-theme='dark'] .app-loading {
-            background-color: #2c344a;
-          }
+        html[data-theme='dark'] .app-loading {
+          background-color: #2c344a;
+        }
 
-          html[data-theme='dark'] .app-loading .app-loading-title {
-            color: rgb(255 255 255 / 85%);
-          }
+        html[data-theme='dark'] .app-loading .app-loading-title {
+          color: rgb(255 255 255 / 85%);
+        }
 
-          .app-loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            background-color: #f4f7f9;
-          }
+        .app-loading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          background-color: #f4f7f9;
+        }
 
-          .app-loading .app-loading-wrap {
-            display: flex;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transform: translate3d(-50%, -50%, 0);
-          }
+        .app-loading .app-loading-wrap {
+          display: flex;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          transform: translate3d(-50%, -50%, 0);
+        }
 
-          .app-loading .dots {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 98px;
-          }
+        .app-loading .dots {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 98px;
+        }
 
-          .app-loading .app-loading-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 30px;
-            color: rgb(0 0 0 / 85%);
-            font-size: 30px;
-          }
+        .app-loading .app-loading-title {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 30px;
+          color: rgb(0 0 0 / 85%);
+          font-size: 30px;
+        }
 
-          .app-loading .app-loading-logo {
-            display: block;
-            width: 90px;
-            margin: 0 auto;
-            margin-bottom: 20px;
-          }
+        .app-loading .app-loading-logo {
+          display: block;
+          width: 90px;
+          margin: 0 auto;
+          margin-bottom: 20px;
+        }
 
-          .dot {
-            display: inline-block;
-            position: relative;
-            box-sizing: border-box;
-            width: 48px;
-            height: 48px;
-            margin-top: 30px;
-            transform: rotate(45deg);
-            animation: ant-rotate 1.2s infinite linear;
-            font-size: 32px;
-          }
+        .dot {
+          display: inline-block;
+          position: relative;
+          box-sizing: border-box;
+          width: 48px;
+          height: 48px;
+          margin-top: 30px;
+          transform: rotate(45deg);
+          animation: ant-rotate 1.2s infinite linear;
+          font-size: 32px;
+        }
 
-          .dot i {
-            display: block;
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            transform: scale(0.75);
-            transform-origin: 50% 50%;
-            animation: ant-spin-move 1s infinite linear alternate;
-            border-radius: 100%;
-            opacity: 0.3;
-            background-color: #0065cc;
-          }
+        .dot i {
+          display: block;
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          transform: scale(0.75);
+          transform-origin: 50% 50%;
+          animation: ant-spin-move 1s infinite linear alternate;
+          border-radius: 100%;
+          opacity: 0.3;
+          background-color: #0065cc;
+        }
 
-          .dot i:nth-child(1) {
-            top: 0;
-            left: 0;
-          }
+        .dot i:nth-child(1) {
+          top: 0;
+          left: 0;
+        }
 
-          .dot i:nth-child(2) {
-            top: 0;
-            right: 0;
-            animation-delay: 0.4s;
-          }
+        .dot i:nth-child(2) {
+          top: 0;
+          right: 0;
+          animation-delay: 0.4s;
+        }
 
-          .dot i:nth-child(3) {
-            right: 0;
-            bottom: 0;
-            animation-delay: 0.8s;
-          }
+        .dot i:nth-child(3) {
+          right: 0;
+          bottom: 0;
+          animation-delay: 0.8s;
+        }
 
-          .dot i:nth-child(4) {
-            bottom: 0;
-            left: 0;
-            animation-delay: 1.2s;
-          }
+        .dot i:nth-child(4) {
+          bottom: 0;
+          left: 0;
+          animation-delay: 1.2s;
+        }
 
-          @keyframes ant-rotate {
-            to {
-              transform: rotate(405deg);
-            }
+        @keyframes ant-rotate {
+          to {
+            transform: rotate(405deg);
           }
+        }
 
-          @keyframes ant-spin-move {
-            to {
-              opacity: 1;
-            }
+        @keyframes ant-spin-move {
+          to {
+            opacity: 1;
           }
-        </style>
-        <div class="app-loading">
-          <div class="app-loading-wrap">
-            <img src="/logo.png" class="app-loading-logo" alt="Logo" />
-            <div class="app-loading-dots">
-              <span class="dot dot-spin"><i></i><i></i><i></i><i></i></span>
-            </div>
-            <div class="app-loading-title"><%= VITE_GLOB_APP_TITLE %></div>
+        }
+      </style>
+      <div class="app-loading">
+        <div class="app-loading-wrap">
+          <img src="/logo.png" class="app-loading-logo" alt="Logo" />
+          <div class="app-loading-dots">
+            <span class="dot dot-spin"><i></i><i></i><i></i><i></i></span>
           </div>
+          <div class="app-loading-title"><%= VITE_GLOB_APP_TITLE %></div>
         </div>
       </div>
     </div>

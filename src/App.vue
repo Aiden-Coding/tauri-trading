@@ -1,14 +1,14 @@
 <template>
   <ConfigProvider :locale="getAntdLocale" :theme="themeConfig">
     <AppProvider>
-      <!-- <TitleBar /> -->
+      <TitleBar />
       <RouterView />
     </AppProvider>
   </ConfigProvider>
 </template>
 
 <script lang="ts" setup>
-  // import TitleBar from '@/layouts/default/titleBar/TitleBar.vue';
+  import TitleBar from '@/layouts/default/titleBar/TitleBar.vue';
   import { AppProvider } from '@/components/Application';
   import { useTitle } from '@/hooks/web/useTitle';
   import { useLocale } from '@/locales/useLocale';

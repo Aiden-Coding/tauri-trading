@@ -1,87 +1,49 @@
 <template>
-  <div
-    :class="getSiderClass"
-    @mouseenter="mouseenter"
-    @mouseleave="mouseleave"
-    @mousedown="mousedown"
-    @mouseup="mouseup"
-  >
-    <Button> <Icon icon="ant-design:fullscreen-exit-outlined" /></Button>
-    <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
-    <Button> <Icon icon="ant-design:file-add-outlined" />ss </Button>
-  </div>
+  <div :class="`${prefixCls}`"> 自定义标题栏 </div>
 </template>
 
 <script lang="ts" setup>
-  import { Button } from 'ant-design-vue';
-  import Icon from '@/components/Icon/Icon.vue';
-
-  import { computed, CSSProperties, h, ref, unref } from 'vue';
   import { useDesign } from '@/hooks/web/useDesign';
   const { prefixCls } = useDesign('title-bar');
-  const getSiderClass = computed(() => {
-    return [prefixCls];
+  import { onMounted } from 'vue';
+  onMounted(async () => {
+    const platform = await window.ipcRenderer.invoke('app_platform');
+    console.log(platform);
+    if (platform === 'darwin') {
+      document.querySelector('.custom-titlebar')?.classList.add('darwin');
+    } else if (platform === 'linux') {
+      document.querySelector('.custom-titlebar')?.classList.add('linux');
+    }
   });
-  // 鼠标进入判断，只有鼠标进入到范围内，才能进行鼠标按压拖拽
-  const enterFlag = ref(false);
-  // 鼠标按压判断，只有鼠标进入范围内，并且按压状态，此时释放鼠标才会关闭窗口移动
-  const mousedownFlag = ref(false);
-  let timer: NodeJS.Timeout | null;
-
-  /**鼠标按压 */
-  const mousedown = () => {
-    if (enterFlag) {
-      (window as any).ipcRenderer.send("window-move-open", true);
-      mousedownFlag.value = true;
-    }
-  };
-
-  /**鼠标释放 */
-  const mouseup = () => {
-    if (enterFlag && mousedownFlag) {
-
-      (window as any).ipcRenderer.send("window-move-open", false);
-      mousedownFlag.value = false;
-    }
-  };
-
-  /**鼠标移入 */
-  const mouseenter = () => {
-    enterFlag.value = true;
-  };
-
-  /**鼠标移出 */
-  const mouseleave = () => {
-    enterFlag.value = false;
-    // 避免卡顿的情况下，鼠标滑出移动范围，但窗口仍跟随鼠标移动
-    if (timer !== null) {
-      timer = setTimeout(() => {
-        mousedownFlag.value = false;
-
-      (window as any).ipcRenderer.send("window-move-open", false);
-        timer = null;
-      }, 1000);
-    }
-  };
 </script>
 <style lang="less">
   @prefix-cls: ~'@{namespace}-title-bar';
 
   .@{prefix-cls} {
-    height: 30px;
-    background-color: @sider-dark-bg-color;
-    user-select: none;
     display: flex;
-    justify-content: flex-end;
-    top: 0;
-    left: 0;
-    right: 0;
+    align-items: center;
+    /* 避免被收缩 */
+    flex-shrink: 0;
+    /* 高度与 main.js 中 titleBarOverlay.height 一致  */
+    height: 35px;
+    width: 100%;
+    /* 标题栏始终在最顶层（避免后续被 Modal 之类的覆盖） */
+    z-index: 9999;
 
-    & > button {
-      background-color: @sider-dark-bg-color;
-      padding: 0;
-      border-radius: 0;
-      border: 0;
+    background-color: #23272e;
+    color: white;
+    padding-left: 12px;
+    font-size: 14px;
+    user-select: none;
+    /* 设置该属性表明这是可拖拽区域，用来移动窗口 */
+    -webkit-app-region: drag;
+
+    .darwin {
+      justify-content: center;
+    }
+
+    .linux {
+      display: none;
     }
   }
 </style>
