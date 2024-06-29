@@ -74,8 +74,6 @@ import { getUserInfo } from '../../api/sys/user';
         library_path: props.libraryPath,
 
         locale: getLanguageFromURL() || 'zh',
-        disabled_features: ['use_localstorage_for_settings'],
-        enabled_features: ['study_templates'],
         charts_storage_url: props.chartsStorageUrl,
         charts_storage_api_version: props.chartsStorageApiVersion,
         client_id: props.clientId,
@@ -106,6 +104,7 @@ import { getUserInfo } from '../../api/sys/user';
           'study_templates',
           // 'pre_post_market_sessions',
           'show_object_tree',
+          "dom_widget",
         ],
       };
       if (isFirstIn) {
