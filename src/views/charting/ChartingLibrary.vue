@@ -86,6 +86,9 @@ import { getUserInfo } from '../../api/sys/user';
           'use_localstorage_for_settings',
           'open_account_manager',
           'trading_account_manager',
+          'order_panel',
+          'order_info',
+          'adaptive_logo'
         ],
         // eslint-disable-next-line no-dupe-keys
         enabled_features: [
