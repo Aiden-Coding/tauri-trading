@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import { ChildProcess } from 'node:child_process';
 import child_process from 'node:child_process';
 
+const windows: BrowserWindow[] = [];
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -32,6 +33,17 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 let win: BrowserWindow | null;
 let workerProcess: ChildProcess | null;
 function createWindow() {
+  // Renderer 3
+  const nodeFalse = new BrowserWindow({
+    width: 600,
+    height: 400,
+  });
+  if (process.env.VITE_DEV_SERVER_URL) {
+    nodeFalse.loadURL('http://localhost:5175/html/node-false.html');
+  } else {
+    nodeFalse.loadFile(path.join(__dirname, '../dist/html/node-false.html'));
+  }
+  windows.push(nodeFalse);
   win = new BrowserWindow({
     width: 1000,
     // resizable: true,

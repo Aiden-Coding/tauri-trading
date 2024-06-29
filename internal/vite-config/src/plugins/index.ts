@@ -11,6 +11,7 @@ import { configHtmlPlugin } from './html';
 import { configMockPlugin } from './mock';
 import { configSvgIconsPlugin } from './svgSprite';
 import { configVisualizerConfig } from './visualizer';
+import multiple from 'vite-plugin-multiple';
 
 interface Options {
   isBuild: boolean;
@@ -76,6 +77,19 @@ async function createPlugins({ isBuild, root, enableMock, compress, enableAnalyz
             undefined
           : {},
     }),
+  );
+
+  vitePlugins.push(
+    multiple([
+      {
+        name: 'node-true',
+        config: path.resolve(__dirname, '../../../../vite.node-true.config.ts'),
+      },
+      {
+        name: 'node-false',
+        config: path.resolve(__dirname, '../../../../vite.node-false.config.ts'),
+      },
+    ]),
   );
   return vitePlugins;
 }
