@@ -37,11 +37,15 @@ let workerProcess: ChildProcess | null;
 function createWindow() {
   // Renderer 3
   const worker = new BrowserWindow({
-    show: false,
-    webPreferences: { nodeIntegration: true },
+    // show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.mjs'),
+    },
   });
   if (process.env.VITE_DEV_SERVER_URL) {
-    worker.loadURL('http://localhost:5175/html/node-false.html');
+    worker.loadURL('http://localhost:5174/html/node-false.html');
+    worker.webContents.openDevTools();
   } else {
     worker.loadFile(path.join(__dirname, '../dist/html/node-false.html'));
   }
@@ -105,8 +109,11 @@ function createWindow() {
   // MessagePort.
   // 监听从顶级 frame 发来的消息
   win.webContents.mainFrame.ipc.on('request-worker-channel', (event) => {
+    console.log(event);
     // 建立新通道  ...
     const { port1, port2 } = new MessageChannelMain();
+    console.log(port1);
+    console.log(port2);
     // ... 将其中一个端口发送给 Worker ...
     worker.webContents.postMessage('new-client', null, [port1]);
     // ... 将另一个端口发送给主窗口

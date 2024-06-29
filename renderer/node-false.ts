@@ -1,19 +1,8 @@
-document.getElementById('app')!.innerHTML = `
-<h1>examples/multiple-window/node-false.ts</h1>
-<hr>
-<pre id="fs-api"></pre>
-`
+const doWork = (input) => {
+  // 一些对CPU要求较高的任务
+  return input * 2;
+};
 
-function loadFs() {
-  return import('node:fs')
-}
-
-loadFs().catch(error => {
-  document.getElementById('fs-api')!.innerHTML = `
-<strong>fs API:</strong>
-
-${error}
-`.trim()
-})
-
-export {}
+// 我们可能会得到多个 clients, 比如有多个 windows,
+// 或者假如 main window 重新加载了.
+console.log(window.ipcRenderer);

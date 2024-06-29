@@ -82,10 +82,6 @@ async function createPlugins({ isBuild, root, enableMock, compress, enableAnalyz
   vitePlugins.push(
     multiple([
       {
-        name: 'node-true',
-        config: path.resolve(__dirname, '../../../../vite.node-true.config.ts'),
-      },
-      {
         name: 'node-false',
         config: path.resolve(__dirname, '../../../../vite.node-false.config.ts'),
       },
